@@ -1,0 +1,8 @@
+INFO:root:Starting conversion for input PDF: storage/app/uploads/To_be_converted-1691261888.pdf
+INFO:root:Conversion completed for input PDF: storage/app/uploads/To_be_converted-1691261888.pdf
+ERROR:root:Error during OCR: Unable to get page count.
+I/O Error: Couldn't open file 'D:\Projects\Billiard pdf to csv\storage\app/uploads/to-be-converted-1691263735.pdf': No error.
+
+ERROR:root:Error during OCR: Unable to get page count.
+I/O Error: Couldn't open file 'D:\Projects\Billiard pdf to csv\storage\app\uploads\to-be-converted-1691264868.pdf': No error.
+

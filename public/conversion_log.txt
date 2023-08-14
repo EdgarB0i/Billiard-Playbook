@@ -1,0 +1,44 @@
+ERROR:root:Error during OCR: Unable to get page count.
+I/O Error: Couldn't open file 'uploads/to-be-converted-1691265394.pdf': No error.
+
+ERROR:root:Error during OCR: Unable to get page count.
+I/O Error: Couldn't open file 'D:\Projects\Billiard pdf to csv\storage\app\uploads\to-be-converted-1691263735.pdf': No error.
+
+ERROR:root:Error during OCR: Unable to get page count.
+I/O Error: Couldn't open file 'uploads/to-be-converted-1691266694.pdf': No error.
+
+ERROR:root:Error during OCR: Unable to get page count.
+I/O Error: Couldn't open file 'uploads/to-be-converted-1691266712.pdf': No error.
+
+ERROR:root:Error during OCR: Unable to get page count.
+I/O Error: Couldn't open file 'D:\Projects\Billiard pdf to csv\storage\app\uploads\to-be-converted-1691263735.pdf': No error.
+
+ERROR:root:Error during OCR: Unable to get page count.
+I/O Error: Couldn't open file 'uploads/3eCjEX5Ptm7ZQaB0eP4Kttv2hDZbngWcIHmnsBru.pdf': No error.
+
+ERROR:root:Error during OCR: Unable to get page count.
+I/O Error: Couldn't open file 'uploads/p3d56LB0W6DDvZ7WAAR1lYoqCdEX8pqcfQXF9dBH.pdf': No error.
+
+ERROR:root:Error during OCR: Unable to get page count.
+I/O Error: Couldn't open file 'uploads/5KiM6MJJGjIC3flIiUMchWiEeslJzyQmfF8MvjM0.pdf': No error.
+
+ERROR:root:Error during OCR: Unable to get page count.
+I/O Error: Couldn't open file 'uploads/u3ZiJWCVLnUVsALDjPkiIQetpzXmSb0tkFlOflOn.pdf': No error.
+
+ERROR:root:Error during OCR: Unable to get page count.
+I/O Error: Couldn't open file 'uploads/CHYhjr4WV0yDmJwkL0PnNYI0DKlfwRy3EXceANHr.pdf': No error.
+
+ERROR:root:Error during OCR: Unable to get page count.
+I/O Error: Couldn't open file 'uploads/Je6hnxjmHT6gyie7vlccxY52kKLUYCqCZQXy4lZ7.pdf': No error.
+
+ERROR:root:Error during OCR: Unable to get page count.
+I/O Error: Couldn't open file 'uploads/cRmanpedBc3gzGrTjZ7FFHtSmxSSrmsSkvBq00s9.pdf': No error.
+
+ERROR:root:Error during OCR: Unable to get page count.
+I/O Error: Couldn't open file 'uploads/FF86XWIRpHGPzq8aID79YWh0OYeAZS7NXSYNrxbL.pdf': No error.
+
+ERROR:root:Error during OCR: Unable to get page count. Is poppler installed and in PATH?
+ERROR:root:Error during OCR: Unable to get page count. Is poppler installed and in PATH?
+ERROR:root:Error during OCR: Unable to get page count.
+I/O Error: Couldn't open file 'uploads/to-be-converted-1691302399.pdf': No error.
+
