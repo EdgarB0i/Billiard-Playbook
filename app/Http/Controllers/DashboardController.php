@@ -12,30 +12,25 @@ class DashboardController extends Controller
     {
         $userId = Auth::user()->id;
         $username = Auth::user()->name;
-
-        // Check if opponent_name and game_date query parameters are present
-        $selectedOpponentData = $request->only(['opponent_name', 'game_date']);
-        if (isset($selectedOpponentData['opponent_name']) && isset($selectedOpponentData['game_date'])) {
-            $selectedGame = GameRecord::where('user_id', $userId)
-                ->where('opponent_name', $selectedOpponentData['opponent_name'])
-                ->where('game_date', $selectedOpponentData['game_date'])
-                ->first();
-
-            if ($selectedGame) {
-                $opponents = GameRecord::where('user_id', $userId)
-                    ->get(['opponent_name', 'game_date'])
-                    ->unique(function ($item) {
-                        return $item['opponent_name'] . ' - ' . $item['game_date'];
-                    })
-                    ->values();
-
-                return view('dashboard', compact('opponents', 'username', 'selectedGame'));
+    
+        // Check if the 'show_all' parameter is present in the query string
+        $showAll = $request->query('show_all');
+    
+        // Fetch the selected game if specific opponent_name and game_date are provided
+        $selectedGame = null;
+        if (!$showAll) {
+            $selectedOpponentData = $request->only(['opponent_name', 'game_date']);
+            if (isset($selectedOpponentData['opponent_name']) && isset($selectedOpponentData['game_date'])) {
+                $selectedGame = GameRecord::where('user_id', $userId)
+                    ->where('opponent_name', $selectedOpponentData['opponent_name'])
+                    ->where('game_date', $selectedOpponentData['game_date'])
+                    ->first();
             }
         }
-
-        // Apply date filter if provided
-        $filterDate = $request->input('filter_date');
+    
+        // Fetch opponents data
         $query = GameRecord::where('user_id', $userId);
+        $filterDate = $request->input('filter_date');
         if ($filterDate) {
             $query->whereDate('game_date', '<=', $filterDate);
         }
@@ -44,10 +39,23 @@ class DashboardController extends Controller
                 return $item['opponent_name'] . ' - ' . $item['game_date'];
             })
             ->values();
-
-
-        return view('dashboard', compact('opponents', 'username'));
+    
+        // Fetch all game records if 'show_all' is true
+        $allGameRecords = null;
+        if ($showAll) {
+            $allGameRecords = GameRecord::where('user_id', $userId)->get();
+    
+            // Manually render the view content with necessary data
+            $viewContent = view('dashboard', compact('opponents', 'username', 'selectedGame', 'allGameRecords'))->render();
+    
+            // Return the view content
+            return response($viewContent);
+        }
+    
+        // Return the view without the allGameRecords data
+        return view('dashboard', compact('opponents', 'username', 'selectedGame'));
     }
+    
 
     public function downloadCSV($opponent_name, $game_date)
     {
@@ -177,7 +185,13 @@ class DashboardController extends Controller
         return response()->download($tempFile, 'game_data.csv', ['Content-Type' => 'text/csv']);
     }
     
-
+    public function fetchGameRecords(Request $request)
+    {
+        $userId = Auth::user()->id;
+        $gameRecords = GameRecord::where('user_id', $userId)->get();
+        return response()->json($gameRecords);
+    }
+    
 
 
 }

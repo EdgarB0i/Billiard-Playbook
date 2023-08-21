@@ -30,7 +30,20 @@
         .content {
             flex: 1;
         }
+        .game-table th,
+        .game-table td {
+            white-space: nowrap; /* Prevent text from wrapping */
+            overflow: hidden; /* Hide overflowing text */
+            text-overflow: ellipsis; /* Show ellipsis for overflow */
+        }
+    
+        .table-header {
+            font-size: 24px;
+            margin-top: 20px;
+        }
+
     </style>
+
 </head>
 
 <body>
@@ -73,20 +86,30 @@
                 </button>
 
 
-                <div class="dropdown">
-                <button class="btn btn-primary dropdown-toggle" type="button" id="opponentDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                    Select Opponent
-                </button>
+                <div class="d-flex justify-content-center align-items-center" style="margin-bottom: 15px;">
+                    <div class="dropdown mr-2">
+                        <button class="btn btn-primary dropdown-toggle" type="button" id="opponentDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            Select Opponent
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="opponentDropdown">
+                            @foreach ($opponents as $opponent)
+                                <li>
+                                    <a class="dropdown-item" href="#" data-game="{{ json_encode(['opponent_name' => $opponent['opponent_name'], 'game_date' => $opponent['game_date']]) }}" onclick="selectOpponent(this)">
+                                        {{ $opponent['opponent_name'] }} - {{ date('Y-m-d', strtotime($opponent['game_date'])) }}
+                                    </a>
+                                </li>
+                            @endforeach
+                        </ul>
+                    </div>
+                    <div style="margin-left: 10px;">
+                        <button class="btn btn-danger" onclick="redirectToCustomURL()">Show All Game Records</button>
+                    </div>
 
-                    <ul class="dropdown-menu" aria-labelledby="opponentDropdown">
-                        @foreach ($opponents as $opponent)
-                            <li>
-                                <a class="dropdown-item" href="#" data-game="{{ json_encode(['opponent_name' => $opponent['opponent_name'], 'game_date' => $opponent['game_date']]) }}" onclick="selectOpponent(this)">
-                                    {{ $opponent['opponent_name'] }} - {{ date('Y-m-d', strtotime($opponent['game_date'])) }}
-                                </a>
-                            </li>
-                        @endforeach
-                    </ul>
+
+                </div>
+
+                <div id="allGameRecords" class="mt-5">
+                    <!-- Placeholder for displaying all game records -->
                 </div>
                 @if(isset($selectedGame))
             <div class="container mt-5">
@@ -187,11 +210,14 @@
                             Download as CSV
                         </a>
                     </div>
-
+                    <br>
                     @endif
 
                 </div>
             @endif
+            <div class="text-center">
+            <button id="downloadCSVButton" class="btn btn-primary" style="display: none; margin: 0 auto;" onclick="downloadAllGameRecords()">Download CSV</button>
+            </div>
 
             </div>
         </div>
@@ -234,7 +260,228 @@
     }
 </script>
 
-<!-- Rest of the page content... -->
+<script>
+let createdTables = [];
+// Define the custom URL outside the function
+const baseUrl = window.location.origin + window.location.pathname;
+const customURL = `${baseUrl}?show_all=true`;
+
+function showAllGameRecords() {
+    const allGameRecordsDiv = document.getElementById('allGameRecords');
+    allGameRecordsDiv.innerHTML = ''; // Clear any previous content
+         // Get the filter date from the URL parameters
+         const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        const filterDate = urlParams.get('filter_date');
+        console.log("filter:", filterDate);
+    // Make an AJAX request to fetch game records
+    fetch("{{ route('fetchGameRecords') }}")
+        .then(response => response.json())
+        .then(data => {
+            data.forEach((gameData, index) => {
+                // Create a unique key for the opponent and game date
+                console.log("GameDate",gameData.game_date);
+                console.log("filterDate",filterDate);
+                if (!filterDate || gameData.game_date <= filterDate) {
+                const opponentKey = `${gameData.opponent_name}-${gameData.game_date}`;
+
+                // Check if a table has already been created for the same opponent and game date
+                if (!createdTables.includes(opponentKey)) {
+                    createdTables.push(opponentKey);
+
+                            // Create a new container for each opponent's game records
+                            const container = document.createElement('div');
+                            container.className = 'game-record-container';
+
+                            // Create a table header for each table
+                            const tableHeader = document.createElement('h2');
+                            tableHeader.textContent = `Opponent - ${index + 1}`;
+                            tableHeader.className = 'table-header';
+
+                            // Create a new table for each opponent's game records
+                            const table = document.createElement('table');
+                            table.className = 'table game-table';
+
+
+                            // Construct the table content
+                            const tableContent = `
+                                <thead>
+                                    <tr>
+                                        <th>Info</th>
+                                        <th>{{ $username }}</th>
+                                        <th>${gameData.opponent_name}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                <!-- ... Rows for other game data ... -->
+                                <tr>
+                                        <th>Starting Scores</th>
+                                        <td>${gameData.starting_scores_player1}</td>
+                                        <td>${gameData.starting_scores_player2}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Ending Scores</th>
+                                        <td>${gameData.ending_scores_player1}</td>
+                                        <td>${gameData.ending_scores_player2}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Spot</th>
+                                        <td>${gameData.spot_player1}</td>
+                                        <td>${gameData.spot_player2}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Total Points</th>
+                                        <td>${gameData.total_points_player1 }</td>
+                                        <td>${gameData.total_points_player2 }</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Shots Taken</th>
+                                        <td>${gameData.shots_taken_player1 }</td>
+                                        <td>${gameData.shots_taken_player1 }</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Shots Made</th>
+                                        <td>${gameData.shots_made_player1 }</td>
+                                        <td>${gameData.shots_made_player2 }</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Misses</th>
+                                        <td>${gameData.misses_player1 }</td>
+                                        <td>${gameData.misses_player2 }</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Good Misses</th>
+                                        <td>${gameData.good_misses_player1 }</td>
+                                        <td>${gameData.good_misses_player2 }</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Safeties</th>
+                                        <td>${gameData.safeties_player1 }</td>
+                                        <td>${gameData.safeties_player2 }</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Good Safeties</th>
+                                        <td>${gameData.good_safeties_player1 }</td>
+                                        <td>${gameData.good_safeties_player2 }</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Fouls</th>
+                                        <td>${gameData.fouls_player1 }</td>
+                                        <td>${gameData.fouls_player2 }</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Good Fouls</th>
+                                        <td>${gameData.good_fouls_player1 }</td>
+                                        <td>${gameData.good_fouls_player2 }</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Breaks</th>
+                                        <td>${gameData.breaks_player1 }</td>
+                                        <td>${gameData.breaks_player2 }</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Good Breaks</th>
+                                        <td>${gameData.good_breaks_player1 }</td>
+                                        <td>${gameData.good_breaks_player2 }</td>
+                                    </tr>
+                                    <tr>
+                                        <th>High Run</th>
+                                        <td>${gameData.high_run_player1 }</td>
+                                        <td>${gameData.high_run_player2 }</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Average Run</th>
+                                        <td>${gameData.average_run_player1 }</td>
+                                        <td>${gameData.average_run_player2 }</td>
+                                    </tr>                            
+                            </tbody>
+                            `;
+                            table.innerHTML = tableContent;
+
+                            // Append the table header and table to the container
+                            container.appendChild(tableHeader);
+                            container.appendChild(table);
+
+                            // Append the container to the allGameRecordsDiv
+                            allGameRecordsDiv.appendChild(container);
+                        }
+                }
+            });
+        
+                // Show the "Download CSV" button and apply the text-center class
+                const downloadCSVButton = document.getElementById('downloadCSVButton');
+                const downloadButtonContainer = document.querySelector('.text-center');
+                downloadCSVButton.style.display = 'block';
+                downloadButtonContainer.classList.add('text-center');
+                
+            })
+            .catch(error => {
+                console.error("Error fetching game records:", error);
+            });
+    }
+
+    function redirectToCustomURL() {
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        const filterDate = urlParams.get('filter_date');
+        
+        // Append the filter_date parameter to the custom URL only if it's not null
+        const newCustomURL = filterDate !== null ? `${customURL}&filter_date=${filterDate}` : customURL;
+
+        window.location.href = newCustomURL;
+    }
+
+        window.onload = () => {
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        const showAll = urlParams.get('show_all');
+
+        if (showAll === 'true') {
+            // Load all game records without filtering
+            showAllGameRecords();
+        }
+    };
+
+</script>
+
+<script>
+    function downloadAllGameRecords() {
+        const allTables = document.querySelectorAll('.game-table'); // Get all tables
+        let csvContent = 'data:text/csv;charset=utf-8,';
+
+        allTables.forEach((table, index) => {
+            const tableNumber = index + 1;
+            const infoCellValue = `Table - ${tableNumber}`;
+            let isFirstRow = true; // Flag to skip "Table - No." in subsequent rows;
+
+            const rows = table.querySelectorAll('tbody tr'); // Get rows of each table
+            rows.forEach(row => {
+                const rowHeader = row.querySelector('th').textContent; // Get row header
+                const columns = row.querySelectorAll('td'); // Get columns of each row
+                const rowValues = Array.from(columns).map(column => column.textContent);
+
+                if (isFirstRow) {
+                    csvContent += 'Info,' + '{{ $username }}' + ',' + table.querySelector('thead th:last-child').textContent + '\r\n';
+                    csvContent +=rowHeader + ',' + rowValues.join(',') + '\r\n';
+                    isFirstRow = false;
+                } else {
+                    csvContent +=rowHeader + ',' + rowValues.join(',') + '\r\n';
+                }
+            });
+
+            csvContent += '\r\n'; // Add empty line between tables
+        });
+
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement('a');
+        link.setAttribute('href', encodedUri);
+        link.setAttribute('download', 'game_records.csv');
+        document.body.appendChild(link);
+        link.click();
+    }
+</script>
+
+
 
 <!-- Bootstrap core JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>

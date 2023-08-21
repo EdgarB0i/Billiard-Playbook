@@ -45,7 +45,7 @@ Route::get('/download-latest-converted-csv', [FileConversionController::class, '
 //download zip
 Route::get('/download-converted-zip', [ZipConversionController::class, 'downloadConvertedZip'])->name('download-converted-zip');
 
-
+//dashboard
 Route::middleware(['auth'])->group(function () {
     
     Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
@@ -54,6 +54,7 @@ Route::middleware(['auth'])->group(function () {
 });
 
 
-
+//fetching all data
+Route::get('/fetchGameRecords', [DashboardController::class, 'fetchGameRecords'])->name('fetchGameRecords');
 
 

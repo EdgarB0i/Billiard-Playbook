@@ -72,7 +72,7 @@
                         </div>
                         <button type="submit" class="btn btn-primary">Sign In</button>
                         <a href="{{ route('facebook.login') }}" class="btn" style="background-color: #19B2EB; color: white; display: inline-flex; align-items: center; border: none;">
-                            <img src="https://www.freepnglogos.com/uploads/facebook-logo-icon/facebook-logo-icon-file-facebook-icon-svg-wikimedia-commons-4.png" alt="Facebook Logo" style="width: 20px; height: auto; margin-right: 5px;">
+                            <img src="logos\fb.png" alt="Facebook Logo" style="width: 20px; height: auto; margin-right: 5px;">
                             Log in with Facebook
                         </a>
 
